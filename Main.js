@@ -1,16 +1,14 @@
 
 //Modelo // función anonima, que se va aejecutar a si misma
 (function(){ 
-
 // recibe los parametros del constructor
 self.Board = function(width,height){ 
 this.width= width;
 this.height = height;
 this.playing= false;
-this.jgame_over = false;
+this.game_over = false;
 this.bars = [];
 this.ball= null;
-
 }
 
 self.Board.prototype = {
@@ -20,8 +18,25 @@ self.Board.prototype = {
         return elements;
     }
 }
+})();
 
-}) ();
+//Función  pelota
+(function(){
+    self.Ball = function(x,y,radius,board){
+		this.x = x;
+		this.y = y;
+		this.radius = radius;
+		this.speed_y = 0;
+		this.speed_x = 3;
+		this.board = board;
+		
+
+		board.ball = this;
+		this.kind = "circle";	
+	}
+})();
+
+
 
 // Dibujar las barras
 (function(){
@@ -33,64 +48,108 @@ this.height = height;
 this.board = board;
 this.board.bars.push(this);
 this.kind = "rectangle";
-this.speed = 10;
+this.speed = 10; // incrementa o decrementa la velocidad
 }
 
 //Mover las barras
 self.Bar.prototype = {
 down: function(){
-    this.y += speed;
+    this.y += this.speed;
 },
 up: function(){
-this.y -= speed;
+this.y -= this.speed;
+},
+ // Función que imprime en que cordenadas se encuentra
+ toString: function(){
+    return "x: "+ this.x +" y: "+ this.y ;
 }
 }
-
 })();
-
 
 //Vista // canvas para dibujar los elementos
 (function(){
-    self.BoardView = function(canvas,board){ 
-      this.canvas = canvas;
-      this.canvas.width = board.width;
-      this.canvas.height = board.height;
-      this.board = board;
-      this.contexto = canvas.getContext("2d"); //getContexto es el metodo con el cual se puede dibujar en javascript
+    self.BoardView = function(canvas,board){
+
+		this.canvas = canvas;
+		this.canvas.width = board.width;
+		this.canvas.height = board.height;
+		this.board = board;
+		this.contexto = canvas.getContext("2d");  //getContexto es el metodo con el cual se puede dibujar en javascript
     }  
     
     self.BoardView.prototype={
+        
+		clean: function(){
+			this.ctx.clearRect(0,0,this.board.width,this.board.height);
+		},
+
         draw: function(){
-            for (var i = this.board.elements.length -1; i>= 0; i--){
-                var el = this.board.elements[i];
-                draw(this.contexto,el)
-            };
-        }
-    };
+            for (var i = this.board.elements.length - 1; i >= 0; i--) {
+				var el = this.board.elements[i];
+
+				draw(this.contexto,el);
+			};
+        },
+        //Méto que ejecuta para dibujar y limpiar
+        play: function(){
+			if(this.board.playing){
+				this.clean();
+				this.draw();
+			}
+			
+		}
+
+
+    }
 
     // dibujar los diferentes elementos
     function draw(contexto, element){ // draw dibuja los diferentes elementos
-        if (element != null && element.hasOwnProperty("kind")){
             switch (element.kind){
                 case "rectangle":
                     contexto.fillRect(element.x,element.y,element.width,element.height);
                     break;
+                case "circle": 
+                    ctx.beginPath();
+                    ctx.arc(element.x,element.y,element.radius,0,7);
+                    ctx.fill();
+                    ctx.closePath();
+                    break;
              }
-        }
     }
 })();
 
-
-window.addEventListener("load",main);
-// función main que ejecuta todos los elementos
-function main(){ 
     var board = new Board(800,400)
     var bar = new Bar(20,100,40,100,board);
-    var bar = new Bar(700,100,40,100,board);
+    var bar2 = new Bar(700,100,40,100,board);
     var canvas = document.getElementById('canvas');
     var boar_view = new BoardView(canvas,board);
-    
-console.log(board);
+    var ball = new Ball(350, 100, 10,board);
+   
+   //Método que captura cuando el evento ocurre (mover las barras)
+document.addEventListener("keydow", function(ev){
+    ev.preventDefault();
+if(ev.keyCode == 38){
+    bar.up();
+}
+else if(ev.keyCode == 40){
+    bar.down();
+}
+
+else if (ev.keyCode == 87){
+    bar2.up();
+}
+else if(ev.keyCode == 83){
+    bar2.down();
+
+console.log(""+bar); //""+bar //bar.toString()
+}
+});
+
+//Método que va actualizando el programa
+window.requestAnimationFrame(controler);
+// función que ejecuta todos los elementos
+function controler(){  
 boar_view.draw();
+requestAnimationFrame(controler);
 
 }
