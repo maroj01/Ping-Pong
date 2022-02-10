@@ -48,7 +48,7 @@ self.Board.prototype = {
 		},
 		get height(){
 			return this.radius * 2;
-		}
+		},
 
 
 
@@ -106,6 +106,18 @@ this.y -= this.speed;
 			};
         },
 
+        //Función para revizar colisiones
+        check_collisions: function(){
+
+			for (var i = this.board.bars.length - 1; i >= 0; i--) {
+				var bar = this.board.bars[i];
+				if(hit(bar, this.board.ball)){
+
+					this.board.ball.collision(bar);
+				}
+			};
+		},
+
 
 
 
@@ -134,10 +146,10 @@ this.y -= this.speed;
                 contexto.fillRect(element.x,element.y,element.width,element.height);
                 break;
             case "circle": 
-            contexto.beginPath();
-            contexto.arc(element.x,element.y,element.radius,0,7);
-            contexto.fill();
-            contexto.closePath();
+                contexto.beginPath();
+                contexto.arc(element.x,element.y,element.radius,0,7);
+                contexto.fill();
+                contexto.closePath();
                 break;
         }
     }
@@ -150,7 +162,7 @@ this.y -= this.speed;
     var boar_view = new BoardView(canvas,board);
     var ball = new Ball(350, 100, 10,board);
    
-   //Método que captura cuando el evento ocurre (mover las barras)
+//Método que captura cuando el evento ocurre (mover las barras)
 document.addEventListener("keydow", function(ev){
     
 if(ev.keyCode == 38){
@@ -172,7 +184,7 @@ else if(ev.keyCode == 83){
 }
 });
 
-//board_view.draw();
+board_view.draw();
 //Método que va actualizando el programa
 window.requestAnimationFrame(controler);
 // función que ejecuta todos los elementos
