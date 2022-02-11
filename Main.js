@@ -190,11 +190,11 @@ function draw(contexto,element){ // draw dibuja los diferentes elementos
 })();
 
 var board = new Board(800,400);
-var bar = new Bar(20,100,40,100,board);
-var bar_2 = new Bar(735,100,40,100,board);
+var bar = new Bar(20,150,40,150,board);
+var bar_2 = new Bar(735,150,40,150,board);
 var canvas = document.getElementById('canvas');
 var board_view = new BoardView(canvas,board);
-var ball = new Ball(350, 100, 10,board);
+var ball = new Ball(370, 200, 10,board);
 
 //Método que captura cuando el evento ocurre (mover las barras)
 document.addEventListener("keydown",function(ev){
